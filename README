@@ -1,0 +1,8 @@
+Collaborative Search App - A backend to Google Chrome extension here: https://github.com/jbordoe/Collab
+
+Meant to run on Google AppEngine as it needs the Users API.
+
+While the extension is meant to collect browsing patterns from users performing searches, the App takes the data, filters it, and indexes the visited sites in order of approximated relevance to a search query and/or page quality (based on the mentioned browsing patterns)
+
+Then, it enables the sharing of such indexes among friends, or publicly (in the future)
+Data from a user's previous searches, as well as the past search sessions of the user's friends, is meant to improve the search experience.
