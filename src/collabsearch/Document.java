@@ -1,26 +1,38 @@
 package collabsearch;
 
+import javax.persistence.Id;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.annotation.Cached;
+import com.googlecode.objectify.annotation.Unindexed;
+
 /**
- * Represents a document from an IR point of view in the system.
- * A <code>Document</code> represents a single page on the internet, and it
- * cannot change the page it represents (it is immutable). The rank of the page
+ * Represents a document from an IR point of view in the system. A
+ * <code>Document</code> represents a single page on the internet, and it cannot
+ * change the page it represents (it is immutable). The rank of the page
  * represented may vary and can be updated.
  * 
  * @author Kamil Olesiejuk
  * 
  */
+@Cached
 public class Document {
 
+	@Id
+	private Long id;
+
 	/**
-	 * URL of the page this <code>Document</code> represents.
-	 * This value is immutable.
+	 * URL of the page this <code>Document</code> represents. This value is
+	 * immutable.
 	 */
+	@Unindexed
 	private String url;
 
 	/**
 	 * The rank assigned to this document.
 	 */
 	private int rank;
+
+	private Key<SearchUser> owner;
 
 	/**
 	 * Single-value constructor that defaults the rank to lowest possible (10).
@@ -87,6 +99,10 @@ public class Document {
 
 	@Override
 	public String toString() {
-		return "url: " + getUrl() + "rank: " + rank;
+		return "url: " + getUrl() + "rank: " + getRank();
+	}
+
+	public void setOwner(SearchUser owner) {
+		this.owner = new Key<SearchUser>(SearchUser.class, owner.getName());;
 	}
 }
