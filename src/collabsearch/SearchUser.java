@@ -2,13 +2,14 @@ package collabsearch;
 
 import java.util.List;
 
-import com.google.appengine.api.users.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Cached;
+import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
-
-import javax.persistence.Id;
 
 /**
  * User of the system. Google account owners only.
@@ -17,6 +18,8 @@ import javax.persistence.Id;
  * 
  */
 @Cached
+@Entity
+@Indexed
 public class SearchUser {
 
 	@Id
@@ -25,6 +28,12 @@ public class SearchUser {
 	private String token;
 	@Unindexed
 	private String tokenSecret;
+	
+	/**
+	 * No-arg constructor for Objectify
+	 */
+	@SuppressWarnings("unused")
+	private SearchUser() {}
 
 	public SearchUser(String name) {
 		this.name = name;

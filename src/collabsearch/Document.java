@@ -1,8 +1,11 @@
 package collabsearch;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
+
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
+import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
 
 /**
@@ -15,6 +18,8 @@ import com.googlecode.objectify.annotation.Unindexed;
  * 
  */
 @Cached
+@Entity
+@Indexed
 public class Document {
 
 	@Id
@@ -34,6 +39,12 @@ public class Document {
 
 	private Key<SearchUser> owner;
 
+	/**
+	 * No-arg constructor for the purposes of Objectify
+	 */
+	@SuppressWarnings("unused")
+	private Document() {}
+	
 	/**
 	 * Single-value constructor that defaults the rank to lowest possible (10).
 	 * 
@@ -88,6 +99,14 @@ public class Document {
 		return url;
 	}
 
+	public Key<SearchUser> getOwner() {
+		return owner;
+	}
+
+	public void setOwner(SearchUser owner) {
+		this.owner = new Key<SearchUser>(SearchUser.class, owner.getName());;
+	}
+
 	@Override
 	public boolean equals(Object _doc) {
 		Document doc = (Document) _doc;
@@ -100,9 +119,5 @@ public class Document {
 	@Override
 	public String toString() {
 		return "url: " + getUrl() + "rank: " + getRank();
-	}
-
-	public void setOwner(SearchUser owner) {
-		this.owner = new Key<SearchUser>(SearchUser.class, owner.getName());;
 	}
 }
