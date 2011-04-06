@@ -11,6 +11,12 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>CollabSearch</servlet-name>
 		<url-pattern>/collabsearch</url-pattern>
+	</servlet-mapping><servlet>
+		<servlet-name>LoginServlet</servlet-name>
+		<servlet-class>collabsearch.LoginServlet</servlet-class>
+	</servlet><servlet-mapping>
+		<servlet-name>LoginServlet</servlet-name>
+		<url-pattern>/login</url-pattern>
 	</servlet-mapping><listener>
 		<listener-class>collabsearch.ContextInitializer</listener-class>
 	</listener>
@@ -18,4 +24,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 	
+	
+
 </web-app>
