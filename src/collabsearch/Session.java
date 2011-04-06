@@ -45,6 +45,7 @@ public class Session {
 		
 		private String _name;
 		private boolean _payment;
+		private int _time;
 		private int _visits;
 		private ArrayList<Page> _pages;
 		
@@ -78,6 +79,14 @@ public class Session {
 
 		public void setPages(ArrayList<Page> pages) {
 			this._pages = pages;
+		}
+
+		public void setTime(int time) {
+			this._time = time;
+		}
+
+		public int getTime() {
+			return _time;
 		}
 
 		public static class Page {

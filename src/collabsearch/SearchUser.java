@@ -24,16 +24,13 @@ public class SearchUser {
 
 	@Id
 	private String name;
-	@Unindexed
-	private String token;
-	@Unindexed
-	private String tokenSecret;
-	
+
 	/**
 	 * No-arg constructor for Objectify
 	 */
 	@SuppressWarnings("unused")
-	private SearchUser() {}
+	private SearchUser() {
+	}
 
 	public SearchUser(String name) {
 		this.name = name;
@@ -45,6 +42,11 @@ public class SearchUser {
 
 	private static Objectify getService() {
 		return ObjectifyService.begin();
+	}
+
+	public void save() {
+		Objectify service = getService();
+		service.put(this);
 	}
 
 	public static SearchUser findByName(String name) {
