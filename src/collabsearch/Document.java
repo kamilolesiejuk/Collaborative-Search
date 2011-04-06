@@ -29,13 +29,24 @@ public class Document {
 	 * URL of the page this <code>Document</code> represents. This value is
 	 * immutable.
 	 */
-	@Unindexed
 	private String url;
 
 	/**
 	 * The rank assigned to this document.
 	 */
 	private int rank;
+	
+	
+	private String query;
+	
+	
+	private int time;
+	private boolean payment;
+	private int outgoing;
+	private int visits;
+	private String title;
+	private boolean rated;
+	private int sessionTime;
 
 	private Key<SearchUser> owner;
 
@@ -105,6 +116,85 @@ public class Document {
 
 	public void setOwner(SearchUser owner) {
 		this.owner = new Key<SearchUser>(SearchUser.class, owner.getName());;
+	}
+
+	
+	
+	
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+
+	public boolean isPayment() {
+		return payment;
+	}
+
+	public void setPayment(boolean payment) {
+		this.payment = payment;
+	}
+
+	public int getOutgoing() {
+		return outgoing;
+	}
+
+	public void setOutgoing(int outgoing) {
+		this.outgoing = outgoing;
+	}
+
+	public int getVisits() {
+		return visits;
+	}
+
+	public void setVisits(int visits) {
+		this.visits = visits;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public boolean isRated() {
+		return rated;
+	}
+
+	public void setRated(boolean rated) {
+		this.rated = rated;
+	}
+
+	public int getSessionTime() {
+		return sessionTime;
+	}
+
+	public void setSessionTime(int sessionTime) {
+		this.sessionTime = sessionTime;
+	}
+
+	public void setOwner(Key<SearchUser> owner) {
+		this.owner = owner;
 	}
 
 	@Override
