@@ -3,11 +3,11 @@ package collabsearch;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import collabsearch.Session.Domain.Page;
+
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Indexed;
-
-import collabsearch.Session.Domain.Page;
 
 /**
  * Represents a document from an IR point of view in the system. A
@@ -257,7 +257,7 @@ public class Document {
 	@Override
 	public boolean equals(Object _doc) {
 		Document doc = (Document) _doc;
-		if (this.getUrl().equals(doc.getUrl()))
+		if (this.getUrl().equals(doc.getUrl()) && this.getQuery().equals(doc.getQuery()))
 			return true;
 		else
 			return false;
