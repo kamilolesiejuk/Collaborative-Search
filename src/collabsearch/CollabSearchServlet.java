@@ -35,7 +35,7 @@ public class CollabSearchServlet extends HttpServlet {
 		// Retrieve and return results for given query
 		if (reqType.equals("query")) {
 
-			String q = URLDecoder.decode(req.getParameter("q"),"UTF-8");
+			String q = URLDecoder.decode(req.getParameter("q"), "UTF-8");
 			System.out.println(q);
 
 			makeResponse(resp, q);
@@ -51,14 +51,16 @@ public class CollabSearchServlet extends HttpServlet {
 			ObjectMapper mapper = new ObjectMapper();
 			Session session = new Session();
 			try {
-				session = mapper.readValue(URLDecoder.decode(req.getParameter("data"), "UTF-8"),
+				session = mapper.readValue(
+						URLDecoder.decode(req.getParameter("data"), "UTF-8"),
 						Session.class);
 			} catch (IOException e) {
 				resp.getWriter().println("Error reading session data");
 				// log stack trace
 
 				e.printStackTrace();
-				System.out.println(URLDecoder.decode(req.getParameter("data"), "UTF-8"));
+				System.out.println(URLDecoder.decode(req.getParameter("data"),
+						"UTF-8"));
 			}
 
 			String query = session.getQuery();
@@ -79,9 +81,9 @@ public class CollabSearchServlet extends HttpServlet {
 		Objectify ofy = ObjectifyService.begin();
 		Iterable<Key<Document>> docKeys = ofy.query(Document.class)
 				.filter("query =", q).fetchKeys();
-		
+
 		System.out.println(docKeys.iterator().hasNext());
-		
+
 		Map<Key<Document>, Document> docMap = ofy.get(docKeys);
 		Result res = new Result(new ArrayList<Document>(docMap.values()));
 		try {
@@ -93,6 +95,7 @@ public class CollabSearchServlet extends HttpServlet {
 
 	private void storeSessionData(String uid, Session s) {
 
+		Objectify ofy = ObjectifyService.begin();
 		SearchUser user = new SearchUser(uid);
 		user.save();
 
@@ -108,12 +111,20 @@ public class CollabSearchServlet extends HttpServlet {
 			ArrayList<Page> pages = d.getPages();
 
 			for (Page p : pages) {
-				if (p.getTime() < 2000 && !p.isRated() && !p.isPayment()) {
-					continue; // coarse-grain filter
-				}
 				Document doc = new Document(query, p, user, sessionTime);
 
-				user.addDocument(doc);
+				Iterable<Key<Document>> docKeys = ofy.query(Document.class)
+						.filter("url =", doc.getUrl()).fetchKeys();
+				if (!docKeys.iterator().hasNext()) {
+					user.addDocument(doc);
+				} else {
+					Key<Document> docKey = docKeys.iterator().next();
+					Document tempD = ofy.get(docKey);
+					if (doc.equals(tempD)) {
+						ofy.delete(docKey);
+					}
+					user.addDocument(doc);
+				}
 			}
 		}
 	}
