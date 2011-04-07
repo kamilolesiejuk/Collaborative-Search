@@ -92,9 +92,9 @@ public class Document {
 		this.setSessionTime(sessionTime);
 		this.setTitle(p.getTitle());
 		this.setVisits(p.getVisits());
-		
+
 		this.setRank(calculateRank());
-		
+
 		this.setOwner(owner);
 	}
 
@@ -124,7 +124,7 @@ public class Document {
 			}
 		}
 
-		Double t = (double) (this.time / this.sessionTime);
+		Double t = ((double) this.time) / this.sessionTime;
 		if (t.compareTo(new Double(0.4d)) > 0) {
 			if (t.compareTo(new Double(0.6d)) > 0) {
 				rank -= 2;
@@ -175,7 +175,6 @@ public class Document {
 
 	public void setOwner(SearchUser owner) {
 		this.owner = new Key<SearchUser>(SearchUser.class, owner.getName());
-		;
 	}
 
 	public String getQuery() {
@@ -257,10 +256,8 @@ public class Document {
 	@Override
 	public boolean equals(Object _doc) {
 		Document doc = (Document) _doc;
-		if (this.getUrl().equals(doc.getUrl()) && this.getQuery().equals(doc.getQuery()))
-			return true;
-		else
-			return false;
+		return (this.getUrl().equals(doc.getUrl()) && this.getQuery().equals(
+				doc.getQuery()));
 	}
 
 	@Override
