@@ -1,21 +1,21 @@
 package collabsearch;
 
 import java.io.IOException;
-import javax.servlet.http.*;
+import java.util.ArrayList;
+import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.ObjectifyService;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import collabsearch.Session.Domain;
 import collabsearch.Session.Domain.Page;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Objectify;
+import com.googlecode.objectify.ObjectifyService;
 
 /**
  * 
@@ -31,108 +31,86 @@ public class CollabSearchServlet extends HttpServlet {
 		String reqType = req.getParameter("type");
 		// Retrieve and return results for given query
 		if (reqType.equals("query")) {
-			
+
 			String q = req.getParameter("q");
+			System.out.println(q);
+
 			makeResponse(resp, q);
-			
-			
-			
-//			resp.getWriter()
-//					.println(
-//							"{\"status\":\"1\","
-//									+ "\"pages\":[\"http://www.google.com\",\"http://www.tryHaskell.com\",\"http://www.bing.com\"]}");
+
+			// System.out.println(resp);
+
+			// resp.getWriter()
+			// .println(
+			// "{\"status\":\"1\","
+			// +
+			// "\"pages\":[\"http://www.google.com\",\"http://www.tryHaskell.com\",\"http://www.bing.com\"]}");
 		} else if (reqType.equals("session")) {
 			ObjectMapper mapper = new ObjectMapper();
 			Session session = new Session();
 			try {
-				session = mapper.readValue(
-						req.getParameter("data"), Session.class);
+				session = mapper.readValue(req.getParameter("data"),
+						Session.class);
 			} catch (IOException e) {
 				resp.getWriter().println("Error reading session data");
 				// log stack trace
-				
+
+				e.printStackTrace();
+				System.out.println(req.getParameter("data"));
 			}
-			
+
 			String query = session.getQuery();
 			resp.getWriter().println(
 					"Data for '" + query + "' session recieved!");
 			String userid = req.getParameter("userid");
 			storeSessionData(userid, session);
-			
 
 		} else {
 			resp.getWriter().println("Error sending session data");
 		}
 	}
-	
-	private void makeResponse(HttpServletResponse resp, String q) throws IOException {
-		
-		MappingJsonFactory fact = new MappingJsonFactory();
-		JsonGenerator gen = fact.createJsonGenerator(resp.getWriter());
-		
+
+	private void makeResponse(HttpServletResponse resp, String q)
+			throws IOException {
+
+		ObjectMapper mapper = new ObjectMapper();
 		Objectify ofy = ObjectifyService.begin();
+		Iterable<Key<Document>> docKeys = ofy.query(Document.class)
+				.filter("query =", q).fetchKeys();
 		
-		Iterable<Key<Document>> docKeys = ofy.query(Document.class).filter("query =", q).fetchKeys();
+		System.out.println(docKeys.iterator().hasNext());
 		
 		Map<Key<Document>, Document> docMap = ofy.get(docKeys);
-		
-		ArrayList<Document> docs = new ArrayList<Document>(docMap.values());
-		
-		if (docs.isEmpty()) {
-			try {
-				resp.getWriter().println("{\"status\":\"0\",");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				resp.getWriter().println("{\"status\":\"1\","
-						+ "\"pages\":");
-				gen.writeObject(docs);
-				gen.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		Result res = new Result(new ArrayList<Document>(docMap.values()));
+		try {
+			resp.getWriter().println(mapper.writeValueAsString(res));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
 	private void storeSessionData(String uid, Session s) {
-		
+
 		SearchUser user = new SearchUser(uid);
 		user.save();
-		
+
 		String userId = s.getUserId();
 		String query = s.getQuery();
 		int sessionTime = s.getTime();
-		
+
 		ArrayList<Domain> domains = s.getDomains();
-		
-		for (Domain d : domains ) {
-			
+
+		for (Domain d : domains) {
+
 			ArrayList<Page> pages = d.getPages();
-			
-			for (Page p : pages ) {
-				
-				if(p.getTime() < 2000 ) { continue; }
-				
-				Document doc = new Document(p.getUrl());
-				
-				doc.setOutgoing(p.getOutgoing());
-				doc.setPayment(p.isPayment());
-				doc.setRated(p.isRated());
-				doc.setSessionTime(sessionTime);
-				doc.setTitle(p.getTitle());
-				doc.setVisits(p.getVisits());
-				doc.setQuery(query);
-				
-				doc.setOwner(user);
-				
+
+			for (Page p : pages) {
+				if (p.getTime() < 2000) { // coarse-grain filter
+					continue;
+				}
+				Document doc = new Document(query, p, user);
+
 				user.addDocument(doc);
-				
 			}
-			
 		}
-		
-		
 	}
 }

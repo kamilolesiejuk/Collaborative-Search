@@ -40,18 +40,9 @@ public class SearchUser {
 		return this.name;
 	}
 
-	private static Objectify getService() {
-		return ObjectifyService.begin();
-	}
-
 	public void save() {
 		Objectify service = getService();
 		service.put(this);
-	}
-
-	public static SearchUser findByName(String name) {
-		Objectify service = getService();
-		return service.get(SearchUser.class, name);
 	}
 
 	public void addDocument(Document retweet) {
@@ -66,5 +57,14 @@ public class SearchUser {
 		}
 		Objectify service = getService();
 		service.put(documents);
+	}
+
+	public static SearchUser findByName(String name) {
+		Objectify service = getService();
+		return service.get(SearchUser.class, name);
+	}
+
+	private static Objectify getService() {
+		return ObjectifyService.begin();
 	}
 }

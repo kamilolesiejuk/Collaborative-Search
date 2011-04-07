@@ -1,42 +1,47 @@
 package collabsearch;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Result {
 
-	private int status;
-	private ArrayList<Page> pages;
+	private int _status;
+	private ArrayList<Page> _pages;
 	
 	public Result() {
 		this.setStatus(0);
 	}
 	
 	public Result(ArrayList<Document> docs) {
-		this.setStatus(1);
-		this.setPages(docsToPages(docs));
+		this();
+		if (!docs.isEmpty()) {
+			this.setStatus(1);
+			this.setPages(docsToPages(docs));
+		}
 	}
 	
+	public int getStatus() {
+		return _status;
+	}
+
+	public ArrayList<Page> getPages() {
+		return _pages;
+	}
+
 	private ArrayList<Page> docsToPages(ArrayList<Document> docs) {
 		ArrayList<Page> pages = new ArrayList<Page>();
 		for (Document d : docs ) {
 			pages.add(new Page(d.getUrl()));
 		}
+		Collections.sort(pages);
 		return pages;
 	}
 
 	private void setStatus(int status) {
-		this.status = status;
-	}
-
-	public int getStatus() {
-		return status;
+		this._status = status;
 	}
 
 	private void setPages(ArrayList<Page> pages) {
-		this.pages = pages;
-	}
-
-	public ArrayList<Page> getPages() {
-		return pages;
+		this._pages = pages;
 	}
 }
