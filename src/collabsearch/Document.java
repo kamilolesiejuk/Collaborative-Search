@@ -54,8 +54,9 @@ public class Document {
 	 * No-arg constructor for the purposes of Objectify
 	 */
 	@SuppressWarnings("unused")
-	private Document() {}
-	
+	private Document() {
+	}
+
 	/**
 	 * Single-value constructor that defaults the rank to lowest possible (10).
 	 * 
@@ -80,10 +81,8 @@ public class Document {
 		this.url = url;
 		this.rank = rank;
 	}
-	
+
 	public Document(String query, Page p, SearchUser owner) {
-		
-		//TODO: calculate rank!
 		this.setQuery(query);
 		this.setUrl(p.getUrl());
 		this.setTime(p.getTime());
@@ -93,7 +92,52 @@ public class Document {
 		this.setSessionTime(sessionTime);
 		this.setTitle(p.getTitle());
 		this.setVisits(p.getVisits());
+		
+		this.setRank(calculateRank());
+		
 		this.setOwner(owner);
+	}
+
+	private int calculateRank() {
+		int rank = 10;
+
+		if (this.payment) {
+			rank -= 2;
+		}
+		if (this.rated) {
+			rank -= 2;
+		}
+
+		if (this.time > 1000 * 10) {
+			if (this.time < 1000 * 60) {
+				rank -= 1;
+			} else {
+				rank -= 2;
+			}
+		}
+
+		if (this.outgoing > 1) {
+			if (this.outgoing > 3) {
+				rank -= 2;
+			} else {
+				rank -= 1;
+			}
+		}
+
+		Double t = (double) (this.time / this.sessionTime);
+		if (t.compareTo(new Double(0.4d)) > 0) {
+			if (t.compareTo(new Double(0.6d)) > 0) {
+				rank -= 2;
+			} else {
+				rank -= 1;
+			}
+		}
+
+		return rank < 1 ? 1 : rank;
+	}
+
+	private void setUrl(String url) {
+		this.url = url;
 	}
 
 	/**
@@ -125,21 +169,15 @@ public class Document {
 		return url;
 	}
 
-	private void setUrl(String url) {
-		this.url = url;
-	}
-
 	public Key<SearchUser> getOwner() {
 		return owner;
 	}
 
 	public void setOwner(SearchUser owner) {
-		this.owner = new Key<SearchUser>(SearchUser.class, owner.getName());;
+		this.owner = new Key<SearchUser>(SearchUser.class, owner.getName());
+		;
 	}
 
-	
-	
-	
 	public String getQuery() {
 		return query;
 	}

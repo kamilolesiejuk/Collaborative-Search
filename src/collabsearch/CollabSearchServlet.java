@@ -104,8 +104,8 @@ public class CollabSearchServlet extends HttpServlet {
 			ArrayList<Page> pages = d.getPages();
 
 			for (Page p : pages) {
-				if (p.getTime() < 2000) { // coarse-grain filter
-					continue;
+				if (p.getTime() < 2000 && !p.isRated() && !p.isPayment()) {
+					continue; // coarse-grain filter
 				}
 				Document doc = new Document(query, p, user);
 
