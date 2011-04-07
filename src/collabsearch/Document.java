@@ -82,7 +82,7 @@ public class Document {
 		this.rank = rank;
 	}
 
-	public Document(String query, Page p, SearchUser owner) {
+	public Document(String query, Page p, SearchUser owner, int sessionTime) {
 		this.setQuery(query);
 		this.setUrl(p.getUrl());
 		this.setTime(p.getTime());

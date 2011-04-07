@@ -93,6 +93,7 @@ public class CollabSearchServlet extends HttpServlet {
 		SearchUser user = new SearchUser(uid);
 		user.save();
 
+		@SuppressWarnings("unused")
 		String userId = s.getUserId();
 		String query = s.getQuery();
 		int sessionTime = s.getTime();
@@ -107,7 +108,7 @@ public class CollabSearchServlet extends HttpServlet {
 				if (p.getTime() < 2000 && !p.isRated() && !p.isPayment()) {
 					continue; // coarse-grain filter
 				}
-				Document doc = new Document(query, p, user);
+				Document doc = new Document(query, p, user, sessionTime);
 
 				user.addDocument(doc);
 			}
