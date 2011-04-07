@@ -27,6 +27,10 @@ public class Result {
 	public ArrayList<Page> getPages() {
 		return _pages;
 	}
+	
+	public void sortPages() {
+		Collections.sort(_pages);
+	}
 
 	private ArrayList<Page> docsToPages(ArrayList<Document> docs) {
 		ArrayList<Page> pages = new ArrayList<Page>();

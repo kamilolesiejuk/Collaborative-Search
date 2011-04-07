@@ -6,7 +6,8 @@ import javax.persistence.Id;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Indexed;
-import com.googlecode.objectify.annotation.Unindexed;
+
+import collabsearch.Session.Domain.Page;
 
 /**
  * Represents a document from an IR point of view in the system. A
@@ -26,23 +27,22 @@ public class Document {
 	private Long id;
 
 	/**
+	 * The rank assigned to this document.
+	 */
+	private int rank;
+
+	private String query;
+
+	/**
 	 * URL of the page this <code>Document</code> represents. This value is
 	 * immutable.
 	 */
 	private String url;
 
-	/**
-	 * The rank assigned to this document.
-	 */
-	private int rank;
-	
-	
-	private String query;
-	
-	
 	private int time;
-	private boolean payment;
 	private int outgoing;
+	private boolean payment;
+
 	private int visits;
 	private String title;
 	private boolean rated;
@@ -80,6 +80,21 @@ public class Document {
 		this.url = url;
 		this.rank = rank;
 	}
+	
+	public Document(String query, Page p, SearchUser owner) {
+		
+		//TODO: calculate rank!
+		this.setQuery(query);
+		this.setUrl(p.getUrl());
+		this.setTime(p.getTime());
+		this.setOutgoing(p.getOutgoing());
+		this.setPayment(p.isPayment());
+		this.setRated(p.isRated());
+		this.setSessionTime(sessionTime);
+		this.setTitle(p.getTitle());
+		this.setVisits(p.getVisits());
+		this.setOwner(owner);
+	}
 
 	/**
 	 * Getter for <code>rank</code>
@@ -108,6 +123,10 @@ public class Document {
 	 */
 	public String getUrl() {
 		return url;
+	}
+
+	private void setUrl(String url) {
+		this.url = url;
 	}
 
 	public Key<SearchUser> getOwner() {
