@@ -38,14 +38,7 @@ public class CollabSearchServlet extends HttpServlet {
 			System.out.println(q);
 
 			makeResponse(resp, q);
-
-			// System.out.println(resp);
-
-			// resp.getWriter()
-			// .println(
-			// "{\"status\":\"1\","
-			// +
-			// "\"pages\":[\"http://www.google.com\",\"http://www.tryHaskell.com\",\"http://www.bing.com\"]}");
+			
 		} else if (reqType.equals("session")) {
 			ObjectMapper mapper = new ObjectMapper();
 			Session session = new Session();
