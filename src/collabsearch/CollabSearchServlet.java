@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.net.URLDecoder;
-import.java.net.URLEncoder;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -80,7 +79,7 @@ public class CollabSearchServlet extends HttpServlet {
 		Map<Key<Document>, Document> docMap = ofy.get(docKeys);
 		Result res = new Result(new ArrayList<Document>(docMap.values()));
 		try {
-			resp.getWriter().println(URLEncoder.encode(mapper.writeValueAsString(res),"UTF-8"));
+			resp.getWriter().println(mapper.writeValueAsString(res));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
