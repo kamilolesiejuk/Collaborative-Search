@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.net.URLDecoder;
+
 import org.codehaus.jackson.map.ObjectMapper;
 
 import collabsearch.Session.Domain;
@@ -32,7 +34,7 @@ public class CollabSearchServlet extends HttpServlet {
 		// Retrieve and return results for given query
 		if (reqType.equals("query")) {
 
-			String q = req.getParameter("q");
+			String q = URLDecoder.decode(req.getParameter("q"),"UTF-8");
 			System.out.println(q);
 
 			makeResponse(resp, q);
@@ -48,14 +50,14 @@ public class CollabSearchServlet extends HttpServlet {
 			ObjectMapper mapper = new ObjectMapper();
 			Session session = new Session();
 			try {
-				session = mapper.readValue(req.getParameter("data"),
+				session = mapper.readValue(URLDecoder.decode(req.getParameter("data"), "UTF-8"),
 						Session.class);
 			} catch (IOException e) {
 				resp.getWriter().println("Error reading session data");
 				// log stack trace
 
 				e.printStackTrace();
-				System.out.println(req.getParameter("data"));
+				System.out.println(URLDecoder.decode(req.getParameter("data"), "UTF-8"));
 			}
 
 			String query = session.getQuery();
