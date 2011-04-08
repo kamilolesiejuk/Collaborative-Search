@@ -47,24 +47,32 @@ public class CollabSearchServlet extends HttpServlet {
 
 		Objectify ofy = ObjectifyService.begin();
 		UserService userService = UserServiceFactory.getUserService();
-		User u = userService.getCurrentUser();
-		String uid = u.getUserId();
 
-		// TODO: check if user logged in, check if exists ?
-		SearchUser user = ofy.find(new Key<SearchUser>(SearchUser.class, uid));
-		if (user == null) {
-			// is not in our DB
-			// do something sensible
-			// redirect to /login
+		if (!userService.isUserLoggedIn()) {
+			resp.getWriter().println(
+					"<p>Please <a href=\""
+							+ "http://2.collaborativesearch.appspot.com/login"
+							+ "\">sign in</a>.</p>");
 		} else {
-			resp.setContentType("text/plain");
-			String reqType = req.getParameter("type");
-			if (reqType.equals("query")) {
-				handleQuery(req, resp, user);
-			} else if (reqType.equals("session")) {
-				handleSessionData(req, resp, user);
+			User u = userService.getCurrentUser();
+			String uid = u.getUserId();
+			// TODO: check if user logged in, check if exists ?
+			SearchUser user = ofy.find(new Key<SearchUser>(SearchUser.class,
+					uid));
+			if (user == null) {
+				// is not in our DB
+				// do something sensible
+				// redirect to /login
 			} else {
-				resp.getWriter().println("Error sending session data");
+				resp.setContentType("text/plain");
+				String reqType = req.getParameter("type");
+				if (reqType.equals("query")) {
+					handleQuery(req, resp, user);
+				} else if (reqType.equals("session")) {
+					handleSessionData(req, resp, user);
+				} else {
+					resp.getWriter().println("Error sending session data");
+				}
 			}
 		}
 	}
@@ -129,18 +137,20 @@ public class CollabSearchServlet extends HttpServlet {
 		Document tempD;
 		while (tmp.hasNext()) {
 			tempD = tmp.next();
-			System.out.println(tempD.getUrl() + " " + tempD.getOwner().toString());
+			System.out.println(tempD.getUrl() + " "
+					+ tempD.getOwner().toString());
 			for (String addr : addresses) {
 				SearchUser u = ofy.query(SearchUser.class)
 						.filter("email", addr).get();
 				if (u != null) {
 					if (tempD.getOwner().equals(
-							new Key<SearchUser>(SearchUser.class, u.getId()))) {
+							new Key<SearchUser>(SearchUser.class, u.getEmail()))) {
 						documents.add(tempD);
 					}
 				}
 			}
-			if (tempD.getOwner().equals(new Key<SearchUser>(SearchUser.class, user.getId()))) {
+			if (tempD.getOwner().equals(
+					new Key<SearchUser>(SearchUser.class, user.getEmail()))) {
 				documents.add(tempD);
 			}
 		}
