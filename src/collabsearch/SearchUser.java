@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Cached;
@@ -39,6 +40,12 @@ public class SearchUser {
 		this.setId(id);
 		this.setEmail(email);
 		this.setToken(token);
+	}
+	
+	public SearchUser(User user, String token) {
+		this.id = user.getUserId();
+		this.email = user.getEmail();
+		this.token = token;
 	}
 
 	public String getEmail() {

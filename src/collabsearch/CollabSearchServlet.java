@@ -144,13 +144,13 @@ public class CollabSearchServlet extends HttpServlet {
 						.filter("email", addr).get();
 				if (u != null) {
 					if (tempD.getOwner().equals(
-							new Key<SearchUser>(SearchUser.class, u.getEmail()))) {
+							new Key<SearchUser>(SearchUser.class, u.getId()))) {
 						documents.add(tempD);
 					}
 				}
 			}
 			if (tempD.getOwner().equals(
-					new Key<SearchUser>(SearchUser.class, user.getEmail()))) {
+					new Key<SearchUser>(SearchUser.class, user.getId()))) {
 				documents.add(tempD);
 			}
 		}
