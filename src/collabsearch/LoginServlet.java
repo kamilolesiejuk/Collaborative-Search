@@ -30,13 +30,13 @@ public class LoginServlet extends HttpServlet {
 
 		UserService userService = UserServiceFactory.getUserService();
 
-		String thisURL = request.getRequestURI();
+		String thisURL = request.getRequestURL().toString();
 		
-		String next = "http://localhost:8888/login";
+//		String next = "http://localhost:8888/login";
 		String scope = "https://www.google.com/m8/feeds/";
 		boolean secure = false;
 		boolean session = true;
-		String authSubLogin = AuthSubUtil.getRequestUrl(next, scope,
+		String authSubLogin = AuthSubUtil.getRequestUrl(thisURL, scope,
 				secure, session);
 		
 		if (request.getUserPrincipal() != null) {
