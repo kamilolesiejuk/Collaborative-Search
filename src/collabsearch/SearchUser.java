@@ -9,7 +9,6 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Indexed;
-import com.googlecode.objectify.annotation.Unindexed;
 
 /**
  * User of the system. Google account owners only.
@@ -23,7 +22,11 @@ import com.googlecode.objectify.annotation.Unindexed;
 public class SearchUser {
 
 	@Id
-	private String name;
+	private String id;
+
+	private String email;
+
+	private String token = "";
 
 	/**
 	 * No-arg constructor for Objectify
@@ -32,12 +35,26 @@ public class SearchUser {
 	private SearchUser() {
 	}
 
-	public SearchUser(String name) {
-		this.name = name;
+	public SearchUser(String id, String email, String token) {
+		this.setId(id);
+		this.setEmail(email);
+		this.setToken(token);
 	}
 
-	public String getName() {
-		return this.name;
+	public String getEmail() {
+		return this.email;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public void save() {
@@ -45,10 +62,10 @@ public class SearchUser {
 		service.put(this);
 	}
 
-	public void addDocument(Document retweet) {
-		retweet.setOwner(this);
+	public void addDocument(Document doc) {
+		doc.setOwner(this);
 		Objectify service = getService();
-		service.put(retweet);
+		service.put(doc);
 	}
 
 	public void addDocuments(List<Document> documents) {
@@ -59,12 +76,15 @@ public class SearchUser {
 		service.put(documents);
 	}
 
-	public static SearchUser findByName(String name) {
-		Objectify service = getService();
-		return service.get(SearchUser.class, name);
-	}
-
 	private static Objectify getService() {
 		return ObjectifyService.begin();
+	}
+
+	private void setId(String id) {
+		this.id = id;
+	}
+
+	private void setEmail(String email) {
+		this.email = email;
 	}
 }

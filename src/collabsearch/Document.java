@@ -174,7 +174,7 @@ public class Document {
 	}
 
 	public void setOwner(SearchUser owner) {
-		this.owner = new Key<SearchUser>(SearchUser.class, owner.getName());
+		this.owner = new Key<SearchUser>(SearchUser.class, owner.getEmail());
 		;
 	}
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://java.sun.com/xml/ns/javaee"
-xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
 	<servlet>
 		<servlet-name>CollabSearch</servlet-name>
 		<servlet-class>collabsearch.CollabSearchServlet</servlet-class>
@@ -11,19 +11,24 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>CollabSearch</servlet-name>
 		<url-pattern>/collabsearch</url-pattern>
-	</servlet-mapping><servlet>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>LoginServlet</servlet-name>
 		<servlet-class>collabsearch.LoginServlet</servlet-class>
-	</servlet><servlet-mapping>
+	</servlet>
+	<servlet-mapping>
 		<servlet-name>LoginServlet</servlet-name>
 		<url-pattern>/login</url-pattern>
-	</servlet-mapping><listener>
+	</servlet-mapping>
+	<listener>
 		<listener-class>collabsearch.ContextInitializer</listener-class>
 	</listener>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
-	
-	
+	<system-properties>
+		<property name="com.google.gdata.DisableCookieHandler" value="true" />
+	</system-properties>
+
 
 </web-app>
