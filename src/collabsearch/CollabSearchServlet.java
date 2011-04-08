@@ -7,14 +7,12 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.omg.CORBA.Current;
 
 import collabsearch.Session.Domain;
 import collabsearch.Session.Domain.Page;
@@ -169,23 +167,27 @@ public class CollabSearchServlet extends HttpServlet {
 		String query = s.getQuery();
 		int sessionTime = s.getTime();
 		ArrayList<Domain> domains = s.getDomains();
-		for (Domain d : domains) {
-			ArrayList<Page> pages = d.getPages();
-			for (Page p : pages) {
-				Document doc = new Document(query, p, user, sessionTime);
-				Iterable<Key<Document>> docKeys = ofy.query(Document.class)
-						.filter("url =", doc.getUrl()).fetchKeys();
-				if (!docKeys.iterator().hasNext()) {
-					user.addDocument(doc);
-				} else {
-					Key<Document> docKey = docKeys.iterator().next();
-					Document tempD = ofy.get(docKey);
-					if (doc.equals(tempD)) {
-						ofy.delete(docKey);
-					} // replace the previous entry if query and URL equal
-					user.addDocument(doc);
+		if (!domains.isEmpty()) {
+			for (Domain d : domains) {
+				ArrayList<Page> pages = d.getPages();
+				for (Page p : pages) {
+					Document doc = new Document(query, p, user, sessionTime);
+					Iterable<Key<Document>> docKeys = ofy.query(Document.class)
+							.filter("url =", doc.getUrl()).fetchKeys();
+					if (!docKeys.iterator().hasNext()) {
+						user.addDocument(doc);
+					} else {
+						Key<Document> docKey = docKeys.iterator().next();
+						Document tempD = ofy.get(docKey);
+						if (doc.equals(tempD)) {
+							ofy.delete(docKey);
+						} // replace the previous entry if query and URL equal
+						user.addDocument(doc);
+					}
 				}
 			}
+		} else {
+			System.out.println("Error storing data");
 		}
 	}
 
