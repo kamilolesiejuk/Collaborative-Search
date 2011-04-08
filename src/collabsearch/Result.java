@@ -35,7 +35,7 @@ public class Result {
 	private ArrayList<Page> docsToPages(ArrayList<Document> docs) {
 		ArrayList<Page> pages = new ArrayList<Page>();
 		for (Document d : docs ) {
-			pages.add(new Page(d.getUrl()));
+			pages.add(new Page(d));
 		}
 		Collections.sort(pages);
 		return pages;

@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.omg.CORBA.Current;
 
 import collabsearch.Session.Domain;
 import collabsearch.Session.Domain.Page;
@@ -98,28 +100,50 @@ public class CollabSearchServlet extends HttpServlet {
 		Objectify ofy = ObjectifyService.begin();
 		ArrayList<Document> documents = new ArrayList<Document>();
 		ArrayList<String> addresses = getContacts(user, getGroups(user));
-		for (String addr : addresses) {
-			SearchUser u = ofy.query(SearchUser.class).filter("email", addr)
-					.get();
-			if (u != null) {
-				Iterable<Key<Document>> docKeys = ofy
-						.query(Document.class)
-						.filter("owner =",
-								new Key<SearchUser>(SearchUser.class, u.getId()))
-						.fetchKeys();
+		// for (String addr : addresses) {
+		// SearchUser u = ofy.query(SearchUser.class).filter("email", addr)
+		// .get();
+		// if (u != null) {
+		// Iterable<Key<Document>> docKeys = ofy
+		// .query(Document.class)
+		// .filter("owner",
+		// new Key<SearchUser>(SearchUser.class, u.getId()))
+		// .fetchKeys();
+		//
+		// Map<Key<Document>, Document> docs = ofy.get(docKeys);
+		// documents.addAll(docs.values());
+		// }
+		// }
+		//
+		// Iterable<Key<Document>> docKeys = ofy
+		// .query(Document.class)
+		// .filter("owner",
+		// new Key<SearchUser>(SearchUser.class, user.getId()))
+		// .fetchKeys();
+		// System.out.println(docKeys.iterator().hasNext());
+		// Map<Key<Document>, Document> docs = ofy.get(docKeys);
+		// documents.addAll(docs.values());
 
-				Map<Key<Document>, Document> docs = ofy.get(docKeys);
-				documents.addAll(docs.values());
+		Iterator<Document> tmp = ofy.query(Document.class).filter("query =", q)
+				.iterator();
+		Document tempD;
+		while (tmp.hasNext()) {
+			tempD = tmp.next();
+			System.out.println(tempD.getUrl() + " " + tempD.getOwner().toString());
+			for (String addr : addresses) {
+				SearchUser u = ofy.query(SearchUser.class)
+						.filter("email", addr).get();
+				if (u != null) {
+					if (tempD.getOwner().equals(
+							new Key<SearchUser>(SearchUser.class, u.getId()))) {
+						documents.add(tempD);
+					}
+				}
+			}
+			if (tempD.getOwner().equals(new Key<SearchUser>(SearchUser.class, user.getId()))) {
+				documents.add(tempD);
 			}
 		}
-		Iterable<Key<Document>> docKeys = ofy
-				.query(Document.class)
-				.filter("owner =",
-						new Key<SearchUser>(SearchUser.class, user.getId()))
-				.fetchKeys();
-		System.out.println(docKeys.iterator().hasNext());
-		Map<Key<Document>, Document> docs = ofy.get(docKeys);
-		documents.addAll(docs.values());
 
 		Result res = new Result(documents);
 		try {
